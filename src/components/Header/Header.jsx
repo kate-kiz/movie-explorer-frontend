@@ -12,20 +12,20 @@ function Header() {
   const hasHeader = ROUTES_WITH_HEADER.includes(pathname);
 
   return (
-    // hasHeader && (
-    //   <header className={`${pathname === '/' ? 'header_color_blue' : ''} header`} >
-    //     <Navigation />
-    //   </header>
-    // )
-    hasHeader && < header className={`${pathname === '/' ? 'header_color_blue' : ''} header`} >
-      <div className='header__container'>
-        {isAuthenticated ? (
-          <Navigation />
-        ) : (
-          <AuthBlock />
-        )}
-      </div>
-    </header >
+    hasHeader && (
+      <header className={`${pathname === '/' ? 'header_color_blue' : ''} header`} >
+        <Navigation />
+      </header>
+    )
+    // hasHeader && < header className={`${pathname === '/' ? 'header_color_blue' : ''} header`} >
+    //   <div className='header__container'>
+    //     {isAuthenticated ? (
+    //       <Navigation />
+    //     ) : (
+    //       <AuthBlock />
+    //     )}
+    //   </div>
+    // </header >
   );
 };
 

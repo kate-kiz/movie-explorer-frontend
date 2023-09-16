@@ -79,6 +79,10 @@
 	outline: none;
 }
 
+.login__input:focus {
+	border: 1px solid #53837D;
+}
+
 .login__input_type_password {
 	color: #EE3465;
 }

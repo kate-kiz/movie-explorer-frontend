@@ -6,13 +6,13 @@
 	color: #FFF;
 }
 
-.info {
+.about-me__info {
 	margin-top: 66px;
 	display: grid;
 	grid-template-columns: 1fr 270px;
 }
 
-.info__text-container {
+.about-me__text-container {
 	display: flex;
 	flex-direction: column;
 }
@@ -26,7 +26,7 @@
 	letter-spacing: -0.88px;
 }
 
-.info__title {
+.about-me__title {
 	margin: 0;
 	padding: 0;
 	font-family: 'Inter';
@@ -37,7 +37,7 @@
 	letter-spacing: -2px;
 }
 
-.info__subtitle {
+.about-me__subtitle {
 	margin: 0;
 	margin-top: 18px;
 	padding: 0;
@@ -48,7 +48,7 @@
 	line-height: 1.1;
 }
 
-.info__description {
+.about-me__description {
 	margin: 0;
 	margin-top: 26px;
 	padding: 0;
@@ -60,7 +60,7 @@
 	font-size: 14px;
 }
 
-.info__link {
+.about-me__link {
 	margin: 0;
 	margin-top: 99px;
 	padding: 0;
@@ -71,7 +71,7 @@
 	color: #FFF;
 }
 
-.info__photo {
+.about-me__photo {
 	margin-left: 44px;
 	max-width: 270px;
 	height: 327px;
@@ -141,28 +141,28 @@
 		margin: 0 20px;
 	}
 
-	.info {
+	.about-me__info {
 		grid-template-columns: 1fr 255px;
 	}
 
-	.info__title {
+	.about-me__title {
 		font-size: 40px;
 		line-height: 40px;
 	}
 
-	.info__subtitle {
+	.about-me__subtitle {
 		margin-top: 16px;
 		font-size: 12px;
 		line-height: 18px;
 	}
 
-	.info__description {
+	.about-me__description {
 		margin-top: 20px;
 		font-size: 12px;
 		line-height: 18px;
 	}
 
-	.info__link {
+	.about-me__link {
 		margin-top: 87px;
 	}
 
@@ -181,16 +181,16 @@
 }
 
 @media (max-width: 768px) {
-	.info {
+	.about-me__info {
 		max-width: 668px;
 		margin-inline: auto;
 	}
 
-	.info__description {
+	.about-me__description {
 		max-width: 364px;
 	}
 
-	.info__photo {
+	.about-me__photo {
 		height: 307px;
 		max-width: 255px;
 	}
@@ -212,40 +212,40 @@
 
 @media (max-width: 679px) {
 
-	.info {
+	.about-me__info {
 		margin-top: 60px;
 		grid-template-columns: 100%;
 		justify-content: center;
 
 	}
 
-	.info__title {
+	.about-me__title {
 		margin-top: 40px;
 		font-size: 30px;
 		line-height: 36px;
 		letter-spacing: -4%;
 	}
 
-	.info__subtitle {
+	.about-me__subtitle {
 		margin-top: 20px;
 		font-weight: 500;
 		font-size: 11px;
 		line-height: 16px;
 	}
 
-	.info__description {
+	.about-me__description {
 		margin-top: 20px;
 		font-weight: 400;
 		font-size: 11px;
 		line-height: 16px;
 	}
 
-	.info__link {
+	.about-me__link {
 		margin-top: 40px;
 
 	}
 
-	.info__photo-container {
+	.about-me__photo-container {
 		order: -1;
 		max-width: 292px;
 		height: 352px;
@@ -281,15 +281,15 @@
 		margin: 0 auto;
 	}
 
-	.info {
+	.about-me__info {
 		justify-items: center;
 	}
 
-	.info__photo {
+	.about-me__photo {
 		margin: 0;
 	}
 
-	.info__text-container {
+	.about-me__text-container {
 		max-width: 292px;
 	}
 

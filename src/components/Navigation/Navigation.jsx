@@ -14,8 +14,8 @@ function Navigation() {
 	return (
 		<nav className='navigation'>
 			<div className='navigation__container'>
-				<Link to="/" className="logo">
-					<img src={logo} className='logo__image' alt='project logo' />
+				<Link to="/" className="navigation__logo">
+					<img src={logo} className='navigation__logo-image' alt='project logo' />
 				</Link>
 				<div className={`navigation__menu-block ${isBurgerOpen ? 'open' : ''}`}>
 					<div className='navigation__menu'>
@@ -54,7 +54,7 @@ function Navigation() {
 						</div>
 					</button>
 				</div>
-				<div className={`button-hover burger_place_movies burger ${isBurgerOpen ? 'active' : ''}`} onClick={handleBurgerClick}>
+				<div className={`button-hover navigation__burger burger ${isBurgerOpen ? 'active' : ''}`} onClick={handleBurgerClick}>
 					<span></span>
 					<span></span>
 					<span></span>

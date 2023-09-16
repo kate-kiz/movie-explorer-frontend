@@ -13,13 +13,13 @@
 	list-style: none;
 }
 
-.load-more-block {
+.movies-cards__load-more-block {
 	margin-bottom: 19px;
 	display: flex;
 	justify-content: center;
 }
 
-.load-more-block__button {
+.movies-cards__button {
 	margin: 0;
 	margin-top: 83px;
 	margin-bottom: 80px;
@@ -56,7 +56,7 @@
 		gap: 39px;
 	}
 
-	.load-more-block__button {
+	.movies-cards__button {
 		width: 240px;
 	}
 }

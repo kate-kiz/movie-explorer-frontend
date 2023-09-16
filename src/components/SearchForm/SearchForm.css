@@ -33,6 +33,10 @@
 	background-color: transparent;
 }
 
+.search-form__input:focus {
+	color: #53837D;
+}
+
 .search-form__error {
 	margin: 0;
 	padding: 0;

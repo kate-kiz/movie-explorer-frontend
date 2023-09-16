@@ -38,9 +38,9 @@ function MoviesCardList({ moviesData }) {
           <MoviesCard key={movie.movieId} movieData={movie} />
         ))}
       </ul>
-      <div className='load-more-block'>
+      <div className='movies-cards__load-more-block'>
         {visibleMoviesCount < totalMoviesCount && (
-          <button className="button-hover load-more-block__button" onClick={handleLoadMore}>
+          <button className="button-hover movies-cards__button" onClick={handleLoadMore}>
             Ещё
           </button>
         )}

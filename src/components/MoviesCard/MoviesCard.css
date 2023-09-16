@@ -106,8 +106,9 @@
 	}
 
 	.movie-card__container {
-		width: 315px;
-		column-gap: 93px;
+		width: 95%;
+		justify-content: space-between;
+		/* column-gap: 93px; */
 	}
 }
 

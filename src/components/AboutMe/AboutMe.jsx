@@ -9,11 +9,11 @@ function AboutMe() {
 			<div className="main__header main__header_place_about-me">
 				<h2 className="main__subtitle main__subtitle_place_about-me">Студент</h2>
 			</div>
-			<article className="info">
-				<div className="info__text-container">
-					<h3 className="info__title">Екатерина</h3>
-					<p className="info__subtitle">Фронтенд-разработчик, 23 года</p>
-					<p className="info__description">
+			<article className="about-me__info">
+				<div className="about-me__text-container">
+					<h3 className="about-me__title">Екатерина</h3>
+					<p className="about-me__subtitle">Фронтенд-разработчик, 23 года</p>
+					<p className="about-me__description">
 						Я родилась в Алтайском крае, но уже пять лет живу в Новосибирске, закончила факультет Востоковедения и африканистики в НГУ.
 						Несколько лет работала переводчиком с корейского, английского и немецкого языков, но еще со школы мечтала разрабатывать сайты.
 						Поэтому, сейчас воплощаю свои мечты в реальность.
@@ -21,12 +21,12 @@ function AboutMe() {
 					<Link
 						to='https://github.com/kate-kiz'
 						target='_blank'
-						className='link info__link'>
+						className='link about-me__link'>
 						Github
 					</Link>
 				</div>
-				<div className="info__photo-container">
-					<img className="info__photo" src={photo} alt='my profile' />
+				<div className="about-me__photo-container">
+					<img className="about-me__photo" src={photo} alt='my profile' />
 				</div>
 			</article>
 			<article className="portfolio">

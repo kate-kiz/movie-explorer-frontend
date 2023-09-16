@@ -28,7 +28,7 @@ const moviesData = [
 		movieId: 1,
 	},
 	{
-		title: "Драйв»",
+		title: "Драйв",
 		duration: "1ч17м",
 		link: `${film2}`,
 		movieId: 2,

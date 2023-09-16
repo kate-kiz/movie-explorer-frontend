@@ -54,6 +54,10 @@
 	text-align: end;
 }
 
+.profile__form-input:focus {
+	color: #53837D;
+}
+
 .profile__edit-button {
 	margin: 0;
 	margin-top: 204px;
