@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import './MoviesCard.css';
+import { BASE_URL_IMAGES } from '../../utils/constants/mainConstants';
 
 function MoviesCard({ movieData }) {
   const [isLiked, setIsLiked] = useState(false);
@@ -14,10 +15,10 @@ function MoviesCard({ movieData }) {
 
   return (
     <li className="movie-card">
-      <img className="movie-card__image" src={movieData.link} alt={movieData.title} />
+      <img className="movie-card__image" src={`${BASE_URL_IMAGES}${movieData.image.url}`} alt={movieData.nameRU} />
       <div className='movie-card__container'>
         <div className='movie-card__info'>
-          <h2 className="movie-card__title">{movieData.title}</h2>
+          <h2 className="movie-card__title">{movieData.nameRU}</h2>
           <p className="movie-card__duration">{movieData.duration}</p>
         </div>
         {/* {

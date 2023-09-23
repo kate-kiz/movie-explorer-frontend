@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import FilterCheckbox from '../FilterCheckbox/FilterCheckbox';
 import useValidation from '../../hooks/useValidation';
 import find from '../../images/icons/find.svg';
 import './SearchForm.css';
 
-function SearchForm() {
+function SearchForm({ handleSubmitSearch, handleShortFilmsCheckbox }) {
   const {
     value,
     handleChange,
@@ -12,16 +12,29 @@ function SearchForm() {
     isValid,
   } = useValidation();
 
-  const [inputText, setInputText] = useState('');
+  const getInputValue = useCallback(() => {
+    if ("search" in value) {
+      return value.search || "";
+    }
 
+    const lastValue = localStorage.getItem("movie-search-last-keyword");
+    console.log("last value", lastValue);
+    return lastValue;
+  }, [value]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = useCallback((e) => {
     e.preventDefault();
-    // код сабмита
-  };
+    if (!isValid) {
+      // possibly show error here
+      return;
+    }
+
+    console.log("handle submit search", value.search);
+    handleSubmitSearch(getInputValue());
+  }, [isValid, value.search, handleSubmitSearch, getInputValue]);
 
   return (
-    <form className="search-form" onSubmit={handleSubmit}>
+    <form id="search-form" className="search-form" onSubmit={handleSubmit}>
       <div className="search-form__container">
         <input
           className={`search-form__input ${error.search ? 'search-form__input-error' : ''}`}
@@ -29,7 +42,7 @@ function SearchForm() {
           placeholder="Фильм"
           name="search"
           minLength={2}
-          value={value.search || ''}
+          value={getInputValue()}
           onChange={handleChange}
           required
           autoFocus
@@ -39,12 +52,13 @@ function SearchForm() {
           className='button-hover search-form__button'
           type="submit"
           disabled={!isValid}
+          form="search-form"
         >
           {/* <img className='search-form__button_image' alt='blue round button' src={find} /> */}
         </button>
       </div>
       {error.search && <span className="search-form__error">{error.search}</span>}
-      <FilterCheckbox />
+      <FilterCheckbox handleShortFilmsCheckbox={handleShortFilmsCheckbox} />
     </form>
   );
 }
