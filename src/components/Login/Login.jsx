@@ -1,19 +1,30 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useCallback, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import useValidation from '../../hooks/useValidation';
 import './Login.css';
 
-function Login() {
+function Login({ handleLogin, isLoggedIn }) {
   const {
     value,
-    handleChange,
     error,
     isValid,
+    handleChange,
   } = useValidation();
 
-  const handleSubmit = (event) => {
+  const navigate = useNavigate();
+
+  const handleSubmit = useCallback((event) => {
     event.preventDefault();
-  };
+
+    if (isValid) {
+      const { email, password } = value
+      handleLogin(email, password);
+    }
+  }, [handleLogin, isValid, value]);
+
+  useEffect(() => {
+    if (isLoggedIn) navigate("/");
+  }, [isLoggedIn, navigate]);
 
   return (
     <section className="login">

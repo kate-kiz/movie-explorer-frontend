@@ -4,7 +4,6 @@ import MoviesCardList from "../MoviesCardList/MoviesCardList";
 
 import './Movies.css';
 import { beatFilmApi } from "../../utils/MoviesApi";
-import { moviesData } from "../../utils/cards.js";
 
 const SHORT_MOVIE_MAX_DURATION_MINUTES = 40;
 

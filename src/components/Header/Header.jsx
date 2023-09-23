@@ -5,27 +5,18 @@ import Navigation from '../Navigation/Navigation';
 import './Header.css';
 import { ROUTES_WITH_HEADER, ROUTES_WITH_BLACK_HEADER } from '../../utils/constants/routes-constants';
 
-function Header() {
+function Header({ isLoggedIn }) {
   const { pathname } = useLocation();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
   const hasHeader = ROUTES_WITH_HEADER.includes(pathname);
 
   return (
     hasHeader && (
       <header className={`${pathname === '/' ? 'header_color_blue' : ''} header`} >
-        <Navigation />
+        <div className='header__container'>
+          {isLoggedIn ? <Navigation /> : <AuthBlock />}
+        </div>
       </header>
     )
-    // hasHeader && < header className={`${pathname === '/' ? 'header_color_blue' : ''} header`} >
-    //   <div className='header__container'>
-    //     {isAuthenticated ? (
-    //       <Navigation />
-    //     ) : (
-    //       <AuthBlock />
-    //     )}
-    //   </div>
-    // </header >
   );
 };
 

@@ -1,9 +1,9 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useCallback, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import './Register.css';
 import useValidation from '../../hooks/useValidation';
 
-function Register() {
+function Register({ isLoggedIn, handleRegister }) {
 	const {
 		value,
 		handleChange,
@@ -11,9 +11,21 @@ function Register() {
 		isValid,
 	} = useValidation();
 
-	const handleSubmit = (event) => {
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		if (isLoggedIn) navigate("/");
+	}, [isLoggedIn, navigate]);
+
+	const handleSubmit = useCallback((event) => {
 		event.preventDefault();
-	};
+
+		if (isValid) {
+			const { name, email, password } = value;
+			console.log("Handle register", name, email, password);
+			handleRegister(name, email, password)
+		}
+	}, [handleRegister, isValid, value]);
 
 	return (
 		<section className="login">

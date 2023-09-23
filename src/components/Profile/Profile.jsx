@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from 'react-router-dom';
 import './Profile.css';
 
-function Profile() {
+function Profile({ handleSignOut }) {
 	const [isActive, setIsActive] = React.useState(true);
 
 	function handleRedactProfile() {
@@ -49,7 +49,7 @@ function Profile() {
 							>
 								Редактировать
 							</button>
-							<Link className="link profile__exit-button" to="/">
+							<Link className="link profile__exit-button" to="/" onClick={handleSignOut}>
 								Выйти из аккаунта
 							</Link>
 						</>

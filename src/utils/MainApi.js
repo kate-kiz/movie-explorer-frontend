@@ -14,15 +14,24 @@ class MainApi {
         }
     }
 
+    async checkToken(token) {
+        return fetch(`${this._baseUrl}/users/me`, {
+            method: "GET",
+            headers: {
+                ...this._headers,
+                Authorization: `Bearer ${token}`,
+            },
+        })
+            .then((res) => this._checkResponse(res));
+    }
+
     async signUp(name, email, password) {
         return fetch(`${this._baseUrl}/signup`, {
             method: "POST",
             headers: this._headers,
             body: JSON.stringify({ name, email, password }),
         })
-            .then((res) => {
-                this._checkResponse(res)
-            });
+            .then((res) => this._checkResponse(res));
     };
 
     async singIn(email, password) {
@@ -31,9 +40,7 @@ class MainApi {
             headers: this._headers,
             body: JSON.stringify({ email, password }),
         })
-            .then((res) => {
-                this._checkResponse(res)
-            });
+            .then((res) => this._checkResponse(res));
     };
 
     async getUserInfo() {
@@ -41,12 +48,10 @@ class MainApi {
             method: "GET",
             headers: {
                 ...this._headers,
-                Authorization: `Bearer ${localStorage.getItem('token')}`,
+                Authorization: `Bearer ${localStorage.getItem('jwt')}`,
             },
         })
-            .then((res) => {
-                this._checkResponse(res)
-            });
+            .then((res) => this._checkResponse(res));
     };
 
     async setUserInfo(data) {
@@ -54,22 +59,18 @@ class MainApi {
             method: "PATCH",
             headers: {
                 ...this._headers,
-                Authorization: `Bearer ${localStorage.getItem('token')}`,
+                Authorization: `Bearer ${localStorage.getItem('jwt')}`,
             },
             body: JSON.stringify(data),
         })
-            .then((res) => {
-                this._checkResponse(res)
-            });
+            .then((res) => this._checkResponse(res));
     }
 
     async getSavedMovies() {
         return fetch(`${this._baseUrl}/movies`, {
             headers: this._headers,
         })
-            .then((res) => {
-                this._checkResponse(res)
-            });
+            .then((res) => this._checkResponse(res));
     }
 
     async saveMovie(movie) {
@@ -78,9 +79,7 @@ class MainApi {
             headers: this._headers,
             body: JSON.stringify(movie),
         })
-            .then((res) => {
-                this._checkResponse(res)
-            });
+            .then((res) => this._checkResponse(res));
     }
 
     async deleteMovie(movieId) {
@@ -88,12 +87,10 @@ class MainApi {
             method: "DELETE",
             headers: {
                 ...this._headers,
-                Authorization: `Bearer ${localStorage.getItem('token')}`,
+                Authorization: `Bearer ${localStorage.getItem('jwt')}`,
             },
         })
-            .then((res) => {
-                this._checkResponse(res)
-            });
+            .then((res) => this._checkResponse(res));
     }
 
     setToken() {
