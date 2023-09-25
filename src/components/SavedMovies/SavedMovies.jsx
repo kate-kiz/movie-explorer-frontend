@@ -1,13 +1,29 @@
 import SearchForm from "../SearchForm/SearchForm";
 import MoviesCardList from "../MoviesCardList/MoviesCardList";
-import { savedMoviesData } from "../../utils/cards.js";
 import './SavedMovies.css';
 
-function SavedMovies() {
+function SavedMovies({
+	findSavedMovies,
+	savedMovies,
+	handleSavedMoviesSearch,
+	handleSavedShortFilmsCheckbox,
+	handleMovieDeleteClick,
+	isFetching,
+}) {
+
 	return (
 		<>
-			<SearchForm />
-			<MoviesCardList moviesData={savedMoviesData} />
+			<SearchForm
+				handleSubmitSearch={handleSavedMoviesSearch}
+				handleShortFilmsCheckbox={handleSavedShortFilmsCheckbox}
+			/>
+			<MoviesCardList
+				moviesData={savedMovies}
+				location="saved-movies"
+				handleMovieDeleteClick={handleMovieDeleteClick}
+				handleMovieLikeClick={() => { }}
+				isFetching={isFetching}
+			/>
 		</>
 	)
 }

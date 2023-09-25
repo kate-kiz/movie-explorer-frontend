@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import MoviesCard from '../MoviesCard/MoviesCard';
 import './MoviesCardList.css';
+import { useLocation } from 'react-router-dom';
+import Preloader from '../Preloader/Preloader';
 
-function MoviesCardList({ moviesData }) {
+function MoviesCardList({ moviesData, handleMovieLikeClick, handleMovieDeleteClick, savedMovies, isFetching, isError }) {
   const [visibleMoviesCount, setVisibleMoviesCount] = useState(12);
+  const [movieCards, setMovieCards] = useState([]);
   const totalMoviesCount = moviesData.length;
+
+  const { pathname } = useLocation();
 
   useEffect(() => {
     const handleResize = () => {
@@ -27,16 +32,37 @@ function MoviesCardList({ moviesData }) {
     };
   }, []);
 
+  useEffect(() => {
+    const cards = moviesData.slice(0, visibleMoviesCount).map((movie, index) => {
+      let isLiked = true;
+      if (pathname.startsWith('/movies')) {
+        isLiked = savedMovies.some(savedMovie => savedMovie.movieId === movie.id)
+      } return (
+        <MoviesCard
+          key={index}
+          movieData={movie}
+          handleMovieLikeClick={handleMovieLikeClick}
+          handleMovieDeleteClick={handleMovieDeleteClick}
+          savedMovies={savedMovies}
+          isLiked={isLiked}
+        />
+      );
+    });
+
+    setMovieCards(cards);
+
+  }, [savedMovies, moviesData, visibleMoviesCount, handleMovieLikeClick, handleMovieDeleteClick, pathname]);
+
   const handleLoadMore = () => {
     setVisibleMoviesCount(visibleMoviesCount + 4);
   };
 
+  if (isFetching) return <Preloader />
+
   return (
     <section className='movies-cards'>
       <ul className="movies-card-list">
-        {moviesData.slice(0, visibleMoviesCount).map((movie) => (
-          <MoviesCard key={movie.movieId} movieData={movie} />
-        ))}
+        {movieCards}
       </ul>
       <div className='movies-cards__load-more-block'>
         {visibleMoviesCount < totalMoviesCount && (

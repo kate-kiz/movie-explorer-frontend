@@ -1,4 +1,5 @@
 import { BASE_URL_MAIN } from './constants/mainConstants';
+import { BASE_URL_IMAGES } from './constants/mainConstants';
 
 class MainApi {
     constructor({ baseUrl, headers }) {
@@ -68,16 +69,45 @@ class MainApi {
 
     async getSavedMovies() {
         return fetch(`${this._baseUrl}/movies`, {
-            headers: this._headers,
+            headers: {
+                ...this._headers,
+                Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+            },
         })
             .then((res) => this._checkResponse(res));
     }
 
-    async saveMovie(movie) {
+    async saveMovie({
+        country,
+        director,
+        duration,
+        year,
+        description,
+        image,
+        trailerLink,
+        nameRU,
+        nameEN,
+        id,
+    }) {
         return fetch(`${this._baseUrl}/movies`, {
             method: "POST",
-            headers: this._headers,
-            body: JSON.stringify(movie),
+            headers: {
+                ...this._headers,
+                Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+            },
+            body: JSON.stringify({
+                country,
+                director,
+                duration,
+                year,
+                description,
+                image: `${BASE_URL_IMAGES}${image.url}`,
+                trailerLink,
+                thumbnail: `${BASE_URL_IMAGES}${image.formats.thumbnail.url}`,
+                movieId: id,
+                nameRU,
+                nameEN,
+            }),
         })
             .then((res) => this._checkResponse(res));
     }

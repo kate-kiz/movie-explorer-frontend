@@ -1,8 +1,10 @@
 import React, { useCallback, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import FilterCheckbox from '../FilterCheckbox/FilterCheckbox';
 import useValidation from '../../hooks/useValidation';
 import find from '../../images/icons/find.svg';
 import './SearchForm.css';
+
 
 function SearchForm({ handleSubmitSearch, handleShortFilmsCheckbox }) {
   const {
@@ -10,7 +12,7 @@ function SearchForm({ handleSubmitSearch, handleShortFilmsCheckbox }) {
     handleChange,
     error,
     isValid,
-  } = useValidation();
+  } = useValidation({ search: "" });
 
   const getInputValue = useCallback(() => {
     if ("search" in value) {
@@ -18,8 +20,11 @@ function SearchForm({ handleSubmitSearch, handleShortFilmsCheckbox }) {
     }
 
     const lastValue = localStorage.getItem("movie-search-last-keyword");
-    console.log("last value", lastValue);
-    return lastValue;
+    // console.log("last value", lastValue);
+    if (lastValue === null) {
+      localStorage.setItem("movie-search-last-keyword", "");
+    }
+    return lastValue || "";
   }, [value]);
 
   const handleSubmit = useCallback((e) => {
@@ -29,9 +34,8 @@ function SearchForm({ handleSubmitSearch, handleShortFilmsCheckbox }) {
       return;
     }
 
-    console.log("handle submit search", value.search);
     handleSubmitSearch(getInputValue());
-  }, [isValid, value.search, handleSubmitSearch, getInputValue]);
+  }, [isValid, getInputValue, handleSubmitSearch]);
 
   return (
     <form id="search-form" className="search-form" onSubmit={handleSubmit}>
@@ -58,7 +62,9 @@ function SearchForm({ handleSubmitSearch, handleShortFilmsCheckbox }) {
         </button>
       </div>
       {error.search && <span className="search-form__error">{error.search}</span>}
-      <FilterCheckbox handleShortFilmsCheckbox={handleShortFilmsCheckbox} />
+      <FilterCheckbox
+        handleShortFilmsCheckbox={handleShortFilmsCheckbox}
+      />
     </form>
   );
 }
