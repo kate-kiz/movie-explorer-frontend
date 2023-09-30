@@ -17,6 +17,10 @@ import './App.css';
 import mainApi from '../../utils/MainApi';
 import { beatFilmApi } from '../../utils/MoviesApi';
 
+import { SEARCH_MESSAGE } from '../../utils/constants/mainConstants';
+import { RES_MESSAGE } from '../../utils/constants/mainConstants';
+import { SHORT_MOVIE_MAX_DURATION_MINUTES } from '../../utils/constants/mainConstants';
+
 function App() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -24,18 +28,21 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [message, setIsMessage] = useState('');
   const [currentUser, setCurrentUser] = useState({});
   const [movies, setMovies] = useState([]);
   const [savedMovies, setSavedMovies] = useState([]);
 
-  const SHORT_MOVIE_MAX_DURATION_MINUTES = 40;
-
+  const handleApiError = useCallback((err) => {
+    setIsError(true);
+    setIsMessage(RES_MESSAGE.MESSAGE_ERROR);
+    console.log(err);
+  }, []);
 
   const checkToken = useCallback(async () => {
     try {
       const token = localStorage.getItem("jwt");
       const res = await mainApi.checkToken(token);
-      // console.log("check token res", res);
       if (res) {
         setIsLoggedIn(true);
         setCurrentUser(res);
@@ -56,6 +63,8 @@ function App() {
     }
     catch (err) {
       console.log(err);
+      setIsError(true);
+      setIsMessage(RES_MESSAGE.MESSAGE_BAD_REQUEST);
     }
     finally {
       setIsFetching(false);
@@ -65,12 +74,13 @@ function App() {
   const handleRegister = useCallback(async (name, email, password) => {
     try {
       setIsFetching(true);
-
       await mainApi.signUp(name, email, password);
       await handleLogin(email, password);
     }
     catch (err) {
       console.log(err);
+      setIsError(true);
+      setIsMessage(RES_MESSAGE.MESSAGE_BAD_REQUEST);
     }
     finally {
       setIsFetching(false);
@@ -89,18 +99,35 @@ function App() {
   }, []);
 
   const findMovies = useCallback(async () => {
-    const keyword = localStorage.getItem("movie-search-last-keyword").toLowerCase();
-    if (keyword === "") {
-      return;
-    }
+    try {
+      const keyword = localStorage.getItem("movie-search-last-keyword").toLowerCase();
+      if (keyword === "") {
+        return;
+      }
 
-    setIsFetching(true);
-    await beatFilmApi.getMovies().then(res => {
-      const foundMovies = res.filter((movie) => moviesSearchFilter(movie, keyword));
-      setMovies(foundMovies);
-    });
-    setIsFetching(false);
-  }, [moviesSearchFilter]);
+      setIsFetching(true);
+      await beatFilmApi.getMovies().then(res => {
+        const foundMovies = res.filter((movie) => moviesSearchFilter(movie, keyword));
+        setMovies(foundMovies);
+        if (!foundMovies.length) {
+          setIsError(true);
+          setIsMessage(SEARCH_MESSAGE.MESSAGE_NOT_FOUND);
+        } else {
+          setIsError(false);
+          setIsMessage('');
+        }
+      });
+    }
+    catch (err) {
+      handleApiError(err);
+      console.log(err);
+      setIsError(true);
+      setIsMessage(SEARCH_MESSAGE.MESSAGE_SEARCH_ERROR);
+    }
+    finally {
+      setIsFetching(false);
+    }
+  }, [handleApiError, moviesSearchFilter]);
 
   const handleSubmitSearch = useCallback((keyword) => {
     localStorage.setItem("movie-search-last-keyword", keyword);
@@ -112,8 +139,6 @@ function App() {
     localStorage.setItem("movie-search-short-movies", String(!searchShortMovies));
     findMovies();
   }, [findMovies]);
-
-  // save movie = add to LS
 
   const handleMovieLikeClick = useCallback(async (movieData) => {
     try {
@@ -128,9 +153,10 @@ function App() {
       setSavedMovies(savedMoviesUpdRes.data);
     }
     catch (err) {
+      handleApiError(err);
       console.log(err);
     }
-  }, []);
+  }, [handleApiError]);
 
   const handleMovieDeleteClick = useCallback(async (movieData) => {
     try {
@@ -141,17 +167,6 @@ function App() {
     catch (err) {
       console.log(err);
     }
-  }, []);
-
-  // saved movies
-  const savedMoviesSearchFilter = useCallback((movie, keyword) => {
-    const searchSavedShortMovies = localStorage.getItem("saved-movies") === String(true);
-    if (searchSavedShortMovies && movie.duration > SHORT_MOVIE_MAX_DURATION_MINUTES) {
-      return false;
-    }
-
-    const searchFields = [movie.nameRU, movie.nameEN, movie.description, movie.director];
-    return searchFields.some((f) => f.toLowerCase().includes(keyword));
   }, []);
 
   const findSavedMovies = useCallback(async () => {
@@ -165,14 +180,22 @@ function App() {
       const res = await mainApi.getSavedMovies();
       const foundMovies = res.data.filter((movie) => moviesSearchFilter(movie, keyword));
       setSavedMovies(foundMovies);
+      if (!foundMovies.length) {
+        setIsError(true);
+        setIsMessage(SEARCH_MESSAGE.MESSAGE_NOT_FOUND);
+      } else {
+        setIsError(false);
+        setIsMessage('');
+      }
     }
     catch (err) {
+      handleApiError(err);
       console.log(err);
     }
     finally {
       setIsFetching(false);
     }
-  }, []);
+  }, [handleApiError, moviesSearchFilter]);
 
   const handleSavedMoviesSearch = useCallback((keyword) => {
     localStorage.setItem("movie-search-last-keyword", keyword);
@@ -203,6 +226,7 @@ function App() {
 
   const handleEditProfile = useCallback(async (email, name) => {
     try {
+      setIsFetching(true);
       const res = await mainApi.setUserInfo({
         email: email,
         name: name,
@@ -211,6 +235,11 @@ function App() {
     }
     catch (err) {
       console.log(err);
+      setIsError(true);
+      setIsMessage(RES_MESSAGE.MESSAGE_UPDATE_ERROR);
+    }
+    finally {
+      setIsFetching(false);
     }
   }, []);
 
@@ -239,6 +268,7 @@ function App() {
                   savedMovies={savedMovies}
                   isFetching={isFetching}
                   isError={isError}
+                  message={message}
                 />
               }
             />
@@ -254,6 +284,8 @@ function App() {
                   handleMovieDeleteClick={handleMovieDeleteClick}
                   findSavedMovies={findSavedMovies}
                   isFetching={isFetching}
+                  isError={isError}
+                  message={message}
                 />
               }
             />
@@ -264,6 +296,8 @@ function App() {
                   handleLogin={handleLogin}
                   isLoggedIn={isLoggedIn}
                   isError={isError}
+                  isFetching={isFetching}
+                  message={message}
                 />
               }
             />
@@ -272,6 +306,8 @@ function App() {
                 isLoggedIn={isLoggedIn}
                 handleRegister={handleRegister}
                 isError={isError}
+                isFetching={isFetching}
+                message={message}
               />}
             />
             <Route
@@ -282,6 +318,9 @@ function App() {
                   isLoggedIn={isLoggedIn}
                   handleSignOut={handleSignOut}
                   handleEditProfile={handleEditProfile}
+                  isFetching={isFetching}
+                  isError={isError}
+                  message={message}
                 />
               }
             />

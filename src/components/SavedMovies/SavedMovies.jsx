@@ -3,12 +3,13 @@ import MoviesCardList from "../MoviesCardList/MoviesCardList";
 import './SavedMovies.css';
 
 function SavedMovies({
-	findSavedMovies,
 	savedMovies,
 	handleSavedMoviesSearch,
 	handleSavedShortFilmsCheckbox,
 	handleMovieDeleteClick,
 	isFetching,
+	isError,
+	message,
 }) {
 
 	return (
@@ -16,6 +17,8 @@ function SavedMovies({
 			<SearchForm
 				handleSubmitSearch={handleSavedMoviesSearch}
 				handleShortFilmsCheckbox={handleSavedShortFilmsCheckbox}
+				isError={isError}
+				message={message}
 			/>
 			<MoviesCardList
 				moviesData={savedMovies}

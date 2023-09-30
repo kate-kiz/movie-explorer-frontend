@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import useValidation from '../../hooks/useValidation';
 import './Login.css';
 
-function Login({ handleLogin, isLoggedIn }) {
+function Login({ handleLogin, isLoggedIn, isError, isFetching, message }) {
   const {
     value,
     error,
@@ -23,7 +23,7 @@ function Login({ handleLogin, isLoggedIn }) {
   }, [handleLogin, isValid, value]);
 
   useEffect(() => {
-    if (isLoggedIn) navigate("/");
+    if (isLoggedIn) navigate("/movies");
   }, [isLoggedIn, navigate]);
 
   return (
@@ -55,13 +55,14 @@ function Login({ handleLogin, isLoggedIn }) {
               value={value.password || ''}
               onChange={handleChange}
             />
+            <p className="login__error-message">{isError ? message : ''}</p>
             <span className="login__error-message">{error.password}</span>
           </label>
           <div className="login__submit-block">
             <button
-              className={`button-hover login__submit-button ${isValid ? '' : 'login__submit-button_disabled'}`}
+              className={`button-hover login__submit-button ${isValid ? 'login__submit-button_disabled' : ''}`}
               type="submit"
-              disabled={!isValid}
+              disabled={!isValid || !value.email || !value.password || isFetching}
             >
               Войти
             </button>

@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useLocation } from 'react-router-dom';
 import AuthBlock from '../AuthBlock/AuthBlock';
 import Navigation from '../Navigation/Navigation';
 import './Header.css';
-import { ROUTES_WITH_HEADER, ROUTES_WITH_BLACK_HEADER } from '../../utils/constants/routes-constants';
+import { ROUTES_WITH_HEADER } from '../../utils/constants/routes-constants';
 
 function Header({ isLoggedIn }) {
   const { pathname } = useLocation();

@@ -4,7 +4,7 @@ import './MoviesCardList.css';
 import { useLocation } from 'react-router-dom';
 import Preloader from '../Preloader/Preloader';
 
-function MoviesCardList({ moviesData, handleMovieLikeClick, handleMovieDeleteClick, savedMovies, isFetching, isError }) {
+function MoviesCardList({ moviesData, handleMovieLikeClick, handleMovieDeleteClick, savedMovies, isFetching }) {
   const [visibleMoviesCount, setVisibleMoviesCount] = useState(12);
   const [movieCards, setMovieCards] = useState([]);
   const totalMoviesCount = moviesData.length;
@@ -23,23 +23,23 @@ function MoviesCardList({ moviesData, handleMovieLikeClick, handleMovieDeleteCli
       }
     };
 
-    handleResize(); // Установка видимого количества карточек при первом рендере
+    handleResize();
 
-    window.addEventListener('resize', handleResize); // Добавление обработчика изменения размера окна
+    window.addEventListener('resize', handleResize);
 
     return () => {
-      window.removeEventListener('resize', handleResize); // Удаление обработчика при размонтировании компонента
+      window.removeEventListener('resize', handleResize);
     };
   }, []);
 
   useEffect(() => {
-    const cards = moviesData.slice(0, visibleMoviesCount).map((movie, index) => {
+    const cards = moviesData.slice(0, visibleMoviesCount).map((movie) => {
       let isLiked = true;
       if (pathname.startsWith('/movies')) {
         isLiked = savedMovies.some(savedMovie => savedMovie.movieId === movie.id)
       } return (
         <MoviesCard
-          key={index}
+          key={movie._id}
           movieData={movie}
           handleMovieLikeClick={handleMovieLikeClick}
           handleMovieDeleteClick={handleMovieDeleteClick}
@@ -48,7 +48,7 @@ function MoviesCardList({ moviesData, handleMovieLikeClick, handleMovieDeleteCli
         />
       );
     });
-
+    console.log(cards);
     setMovieCards(cards);
 
   }, [savedMovies, moviesData, visibleMoviesCount, handleMovieLikeClick, handleMovieDeleteClick, pathname]);

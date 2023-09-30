@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import './Profile.css';
 import useValidation from "../../hooks/useValidation";
 
-function Profile({ handleSignOut, handleEditProfile }) {
+function Profile({ handleSignOut, handleEditProfile, isFetching, isError, message }) {
 	const [isEditing, setIsEditing] = React.useState(false);
 	const user = useContext(CurrentUserContext);
 
@@ -34,7 +34,7 @@ function Profile({ handleSignOut, handleEditProfile }) {
 		<section className="profile">
 			<div className="profile__container">
 				<h1 className="profile__title">{`Привет, ${user.name}`}</h1>
-				<form id="edit-profile-submig" className="profile__form">
+				<form id="edit-profile-submit" className="profile__form">
 					<label className="profile__form-label border">
 						Имя
 						<input
@@ -48,6 +48,7 @@ function Profile({ handleSignOut, handleEditProfile }) {
 							value={value.name || ""}
 							onChange={handleChange}
 							disabled={!isEditing}
+							pattern="^[A-ZА-ЯËa-za-яё]+(?:[ \-][A-ZА-ЯËa-za-яё]+)*$"
 						/>
 					</label>
 					<label className="profile__form-label">
@@ -58,11 +59,14 @@ function Profile({ handleSignOut, handleEditProfile }) {
 							name="email"
 							id="email-input"
 							placeholder="E-mail"
+							pattern="^[\w]+@[a-zA-Z]+\.[a-zA-Z]{1,3}$"
 							value={value.email || ""}
 							onChange={handleChange}
 							disabled={!isEditing}
+							required
 						/>
 					</label>
+					{isError ? <p className="profile__error-message">{message}</p> : ""}
 					{!isEditing ? (
 						<>
 							<button
@@ -79,10 +83,11 @@ function Profile({ handleSignOut, handleEditProfile }) {
 					) : (
 						<button
 							type="button"
-							className="button-hover profile__save-button"
+							className={`button-hover profile__save-button ${isValid ? 'profile__save-button_disabled' : ''}`}
 							onClick={handleEditProfileSubmit}
 							onSubmit={handleEditProfileSubmit}
-							form="edit-profile-submig"
+							form="edit-profile-submit"
+							disabled={!isValid || (value.email === user.email && value.name === user.name) || isFetching}
 						>
 							Сохранить
 						</button>
