@@ -1,6 +1,4 @@
 
-// export const BASE_URL_MAIN = 'https://api.movie-explorer.nomoredomainsicu.ru'; //my domain
-export const BASE_URL_MAIN = 'http://84.201.167.213'; //my domain
 export const BASE_URL_MOVIES = 'https://api.nomoreparties.co/beatfilm-movies';
 export const BASE_URL_IMAGES = 'https://api.nomoreparties.co';
 

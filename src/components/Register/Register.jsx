@@ -47,7 +47,7 @@ function Register({ isLoggedIn, handleRegister, isError, isFetching, message }) 
 							value={value.name || ''}
 							onChange={handleChange}
 							required
-							pattern="^[A-ZА-ЯËa-za-яё]+(?:[ -][A-ZА-ЯËa-za-яё]+)*$"
+							pattern="^[A-ZА-ЯËa-za-яё]+(?:[ \-][A-ZА-ЯËa-za-яё]+)*$"
 						/>
 						{error.name && <span className="login__error-message">{error.name}</span>}
 					</label>

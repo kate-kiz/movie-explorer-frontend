@@ -1,4 +1,4 @@
-import { BASE_URL_MAIN } from './constants/mainConstants';
+// import { BASE_URL_MAIN } from './constants/mainConstants';
 import { BASE_URL_IMAGES } from './constants/mainConstants';
 
 class MainApi {
@@ -129,7 +129,7 @@ class MainApi {
 }
 
 const mainApi = new MainApi({
-    baseUrl: BASE_URL_MAIN,
+    baseUrl: process.env.REACT_APP_API_URL,
     headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
