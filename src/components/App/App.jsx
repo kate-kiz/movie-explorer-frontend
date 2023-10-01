@@ -32,6 +32,18 @@ function App() {
   const [currentUser, setCurrentUser] = useState({});
   const [movies, setMovies] = useState([]);
   const [savedMovies, setSavedMovies] = useState([]);
+  // const [moviesToDisplay, setMoviesToDisplay] = useState([]);
+
+  useEffect(() => {
+    setIsError(false);
+    setIsMessage('');
+  }, [pathname]);
+
+  useEffect(() => {
+    mainApi.getSavedMovies().then((initialSavedMovies) => {
+      setSavedMovies(initialSavedMovies.data);
+    });
+  }, []);
 
   const handleApiError = useCallback((err) => {
     setIsError(true);
@@ -88,7 +100,7 @@ function App() {
   }, [handleLogin]);
 
   // movies
-  const moviesSearchFilter = useCallback((movie, keyword) => {
+  const moviesSearchFilter = (movie, keyword) => {
     const searchShortMovies = localStorage.getItem("movie-search-short-movies") === String(true);
     if (searchShortMovies && movie.duration > SHORT_MOVIE_MAX_DURATION_MINUTES) {
       return false;
@@ -96,7 +108,7 @@ function App() {
 
     const searchFields = [movie.nameRU, movie.nameEN, movie.description, movie.director];
     return searchFields.some((f) => f.toLowerCase().includes(keyword));
-  }, []);
+  };
 
   const findMovies = useCallback(async () => {
     try {
@@ -127,7 +139,7 @@ function App() {
     finally {
       setIsFetching(false);
     }
-  }, [handleApiError, moviesSearchFilter]);
+  }, [handleApiError]);
 
   const handleSubmitSearch = useCallback((keyword) => {
     localStorage.setItem("movie-search-last-keyword", keyword);
@@ -142,15 +154,14 @@ function App() {
 
   const handleMovieLikeClick = useCallback(async (movieData) => {
     try {
-      const savedMoviesRes = await mainApi.getSavedMovies();
-      if (savedMoviesRes.data.some((m) => (m.nameRU === movieData.nameRU))) {
-        const savedMovieData = savedMoviesRes.data.find((m) => (m.nameRU === movieData.nameRU));
-        await mainApi.deleteMovie(savedMovieData._id);
+      if (savedMovies.some((m) => (m.nameRU === movieData.nameRU))) {
+        const savedMovieData = savedMovies.find((m) => (m.nameRU === movieData.nameRU));
+        const deletedMovie = await mainApi.deleteMovie(savedMovieData._id);
+        setSavedMovies(savedMovies.filter((m) => (m.nameRU !== deletedMovie.data.nameRU)));
       } else {
-        await mainApi.saveMovie(movieData);
+        const newMovie = await mainApi.saveMovie(movieData);
+        setSavedMovies([...savedMovies, newMovie.data]);
       }
-      const savedMoviesUpdRes = await mainApi.getSavedMovies();
-      setSavedMovies(savedMoviesUpdRes.data);
     }
     catch (err) {
       handleApiError(err);
@@ -169,7 +180,7 @@ function App() {
     }
   }, []);
 
-  const findSavedMovies = useCallback(async () => {
+  const findSavedMovies = useCallback(() => {
     try {
       setIsFetching(true);
       const keyword = localStorage.getItem("movie-search-last-keyword").toLowerCase();
@@ -177,25 +188,25 @@ function App() {
         return;
       }
 
-      const res = await mainApi.getSavedMovies();
-      const foundMovies = res.data.filter((movie) => moviesSearchFilter(movie, keyword));
-      setSavedMovies(foundMovies);
+      // const res = await mainApi.getSavedMovies();
+      const foundMovies = savedMovies.filter((movie) => moviesSearchFilter(movie, keyword));
+      setMovies(foundMovies);
       if (!foundMovies.length) {
         setIsError(true);
-        setIsMessage(SEARCH_MESSAGE.MESSAGE_NOT_FOUND);
+        setIsMessage(SEARCH_MESSAGE.MESSAGE_NOTHING_SAVED);
       } else {
         setIsError(false);
         setIsMessage('');
       }
     }
     catch (err) {
-      handleApiError(err);
+      // handleApiError(err);
       console.log(err);
     }
     finally {
       setIsFetching(false);
     }
-  }, [handleApiError, moviesSearchFilter]);
+  }, [savedMovies]);
 
   const handleSavedMoviesSearch = useCallback((keyword) => {
     localStorage.setItem("movie-search-last-keyword", keyword);
@@ -232,6 +243,8 @@ function App() {
         name: name,
       })
       console.log(res);
+      setIsError(true);
+      setIsMessage(RES_MESSAGE.MESSAGE_UPDATE_SUCCESS);
     }
     catch (err) {
       console.log(err);
@@ -278,6 +291,7 @@ function App() {
                 <ProtectedRoute
                   element={SavedMovies}
                   isLoggedIn={isLoggedIn}
+                  movies={movies}
                   savedMovies={savedMovies}
                   handleSavedMoviesSearch={handleSavedMoviesSearch}
                   handleSavedShortFilmsCheckbox={handleSavedShortFilmsCheckbox}
@@ -320,6 +334,7 @@ function App() {
                   handleEditProfile={handleEditProfile}
                   isFetching={isFetching}
                   isError={isError}
+                  currentUser={currentUser}
                   message={message}
                 />
               }

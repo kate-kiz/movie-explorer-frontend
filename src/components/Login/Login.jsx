@@ -39,6 +39,7 @@ function Login({ handleLogin, isLoggedIn, isError, isFetching, message }) {
               className="login__input"
               type="email"
               name="email"
+              pattern="^[\w]+@[a-zA-Z]+\.[a-zA-Z]{1,3}$"
               required
               value={value.email || ''}
               onChange={handleChange}

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import './Profile.css';
 import useValidation from "../../hooks/useValidation";
 
-function Profile({ handleSignOut, handleEditProfile, isFetching, isError, message }) {
+function Profile({ handleSignOut, handleEditProfile, isFetching, isError, message, currentUser }) {
 	const [isEditing, setIsEditing] = React.useState(false);
 	const user = useContext(CurrentUserContext);
 
@@ -21,19 +21,23 @@ function Profile({ handleSignOut, handleEditProfile, isFetching, isError, messag
 	}, [isEditing]);
 
 	const handleEditProfileSubmit = useCallback((e) => {
+		e.preventDefault();
 		if (!isEditing || !isValid) return;
 		handleEditProfile(value.email, value.name)
 		setIsEditing(false);
 	}, [handleEditProfile, isEditing, isValid, value.email, value.name]);
 
 	useEffect(() => {
-		resetForm({ name: user.name, email: user.email });
-	}, [resetForm, user]);
+		// resetForm({ name: currentUser.name, email: currentUser.email });
+		if (currentUser) {
+			resetForm(currentUser, {}, true);
+		}
+	}, [resetForm, currentUser]);
 
 	return (
 		<section className="profile">
 			<div className="profile__container">
-				<h1 className="profile__title">{`Привет, ${user.name}`}</h1>
+				<h1 className="profile__title">Привет, {currentUser ? currentUser.name : '...'}!</h1>
 				<form id="edit-profile-submit" className="profile__form">
 					<label className="profile__form-label border">
 						Имя
@@ -87,7 +91,7 @@ function Profile({ handleSignOut, handleEditProfile, isFetching, isError, messag
 							onClick={handleEditProfileSubmit}
 							onSubmit={handleEditProfileSubmit}
 							form="edit-profile-submit"
-							disabled={!isValid || (value.email === user.email && value.name === user.name) || isFetching}
+							disabled={!isValid || (value.email === currentUser.email && value.name === currentUser.name) || isFetching}
 						>
 							Сохранить
 						</button>

@@ -54,14 +54,14 @@
 	text-align: end;
 }
 
-.profile__error-message_type_active {
+/* .profile__error-message_type_active {
 	color: #EE3465;
-}
+} */
 
 .profile__error-message {
 	margin: 0;
 	padding: 0;
-	color: transparent;
+	color: #EE3465;
 	font-weight: 400;
 	font-size: 10px;
 	line-height: normal;

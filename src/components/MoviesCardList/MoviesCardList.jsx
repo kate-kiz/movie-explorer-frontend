@@ -43,7 +43,6 @@ function MoviesCardList({ moviesData, handleMovieLikeClick, handleMovieDeleteCli
           movieData={movie}
           handleMovieLikeClick={handleMovieLikeClick}
           handleMovieDeleteClick={handleMovieDeleteClick}
-          savedMovies={savedMovies}
           isLiked={isLiked}
         />
       );
