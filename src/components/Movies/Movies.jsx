@@ -5,7 +5,7 @@ import MoviesCardList from "../MoviesCardList/MoviesCardList";
 import './Movies.css';
 
 
-function Movies({ movies, savedMovies, handleMovieLikeClick, handleShortFilmsCheckbox, handleSubmitSearch, isFetching, isError, message }) {
+function Movies({ movies, localStorageItemName, movieFormCheckbox, handleMovieLikeClick, handleShortFilmsCheckbox, handleSubmitSearch, isFetching, isError, message }) {
 	return (
 		<>
 			<SearchForm
@@ -13,11 +13,13 @@ function Movies({ movies, savedMovies, handleMovieLikeClick, handleShortFilmsChe
 				handleShortFilmsCheckbox={handleShortFilmsCheckbox}
 				isError={isError}
 				message={message}
+				movieFormCheckbox={movieFormCheckbox}
+				localStorageItemName={localStorageItemName}
 			/>
 			<MoviesCardList
 				handleMovieLikeClick={handleMovieLikeClick}
 				moviesData={movies}
-				savedMovies={savedMovies}
+				// savedMovies={savedMovies}
 				isFetching={isFetching}
 			/>
 		</>

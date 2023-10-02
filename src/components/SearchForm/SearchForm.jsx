@@ -4,7 +4,7 @@ import FilterCheckbox from '../FilterCheckbox/FilterCheckbox';
 import useValidation from '../../hooks/useValidation';
 import './SearchForm.css';
 
-function SearchForm({ handleSubmitSearch, handleShortFilmsCheckbox, isError, message }) {
+function SearchForm({ localStorageItemName, movieFormCheckbox, handleSubmitSearch, handleShortFilmsCheckbox, isError, message }) {
   const {
     value,
     handleChange,
@@ -19,12 +19,12 @@ function SearchForm({ handleSubmitSearch, handleShortFilmsCheckbox, isError, mes
       return value.search || "";
     }
 
-    const lastValue = localStorage.getItem("movie-search-last-keyword");
+    const lastValue = localStorage.getItem(localStorageItemName);
     if (lastValue === null) {
-      localStorage.setItem("movie-search-last-keyword", "");
+      localStorage.setItem(localStorageItemName, "");
     }
     return lastValue || "";
-  }, [value]);
+  }, [localStorageItemName, value]);
 
   const handleSubmit = useCallback((e) => {
     e.preventDefault();
@@ -59,6 +59,7 @@ function SearchForm({ handleSubmitSearch, handleShortFilmsCheckbox, isError, mes
       {isError ? <span className="search-form__error">{message}</span> : ""}
       <FilterCheckbox
         handleShortFilmsCheckbox={handleShortFilmsCheckbox}
+        defaultChecked={movieFormCheckbox}
       />
     </form>
   );

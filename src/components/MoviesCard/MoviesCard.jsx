@@ -5,6 +5,7 @@ import { BASE_URL_IMAGES } from '../../utils/constants/mainConstants';
 import { useLocation } from 'react-router-dom';
 
 function MoviesCard({
+  movieId,
   movieData,
   isLiked,
   handleMovieLikeClick,
@@ -27,7 +28,7 @@ function MoviesCard({
 
 
   return (
-    <li className="movie-card">
+    <li className="movie-card" key={movieId}>
       <Link to={trailerLink} target='_blank' className="movie-card__trailer-link">
         <img className="movie-card__image" src={image} alt={nameRU} />
       </Link>

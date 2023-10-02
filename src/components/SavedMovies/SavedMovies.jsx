@@ -3,13 +3,15 @@ import MoviesCardList from "../MoviesCardList/MoviesCardList";
 import './SavedMovies.css';
 
 function SavedMovies({
-	savedMovies,
 	handleSavedMoviesSearch,
 	handleSavedShortFilmsCheckbox,
 	handleMovieDeleteClick,
 	isFetching,
 	isError,
 	message,
+	movies,
+	movieFormCheckbox,
+	localStorageItemName,
 }) {
 
 	return (
@@ -19,9 +21,12 @@ function SavedMovies({
 				handleShortFilmsCheckbox={handleSavedShortFilmsCheckbox}
 				isError={isError}
 				message={message}
+				movieFormCheckbox={movieFormCheckbox}
+				localStorageItemName={localStorageItemName}
 			/>
 			<MoviesCardList
-				moviesData={savedMovies}
+				moviesData={movies}
+				// savedMovies={savedMovies}
 				location="saved-movies"
 				handleMovieDeleteClick={handleMovieDeleteClick}
 				handleMovieLikeClick={() => { }}

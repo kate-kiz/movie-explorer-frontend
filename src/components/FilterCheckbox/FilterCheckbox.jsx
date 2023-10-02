@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './FilterCheckbox.css';
 
-function FilterCheckbox({ handleShortFilmsCheckbox }) {
+function FilterCheckbox({ handleShortFilmsCheckbox, defaultChecked }) {
 
   return (
     <div className="filter-checkbox">
@@ -9,7 +9,7 @@ function FilterCheckbox({ handleShortFilmsCheckbox }) {
         <input
           className="filter-checkbox__input"
           type="checkbox"
-          defaultChecked={localStorage.getItem("movie-search-short-movies") === String(true)}
+          defaultChecked={defaultChecked}
           onClick={handleShortFilmsCheckbox}
         />
         <span className="filter-checkbox__slider round"></span>

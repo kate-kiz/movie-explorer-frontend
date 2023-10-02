@@ -32,26 +32,44 @@ function App() {
   const [currentUser, setCurrentUser] = useState({});
   const [movies, setMovies] = useState([]);
   const [savedMovies, setSavedMovies] = useState([]);
+  const [movieFormCheckbox, setMovieFormCheckbox] = useState(localStorage.getItem("movie-search-short-movies") === String(true));
+  const [savedMovieFormCheckbox, setSavedMovieFormCheckbox] = useState(localStorage.getItem("movie-search-saved-short-movies") === String(true));
+  const [localStorageItemName, setLocalStorageItemName] = useState('');
   // const [moviesToDisplay, setMoviesToDisplay] = useState([]);
 
   useEffect(() => {
+    setMovies([]);
     setIsError(false);
     setIsMessage('');
+    setMovieFormCheckbox(localStorage.getItem("movie-search-short-movies") === String(true));
+    setSavedMovieFormCheckbox(localStorage.getItem("movie-search-saved-short-movies") === String(true));
+    switch (pathname) {
+      case '/movies':
+        setLocalStorageItemName("movie-search-last-keyword");
+        break;
+      case '/saved-movies':
+        setLocalStorageItemName("saved-movie-search-last-keyword");
+        break;
+      default:
+        setLocalStorageItemName('');
+        break;
+    }
   }, [pathname]);
 
   useEffect(() => {
+    checkToken();
     mainApi.getSavedMovies().then((initialSavedMovies) => {
       setSavedMovies(initialSavedMovies.data);
     });
   }, []);
 
-  const handleApiError = useCallback((err) => {
+  const handleApiError = (err) => {
     setIsError(true);
     setIsMessage(RES_MESSAGE.MESSAGE_ERROR);
     console.log(err);
-  }, []);
+  };
 
-  const checkToken = useCallback(async () => {
+  const checkToken = async () => {
     try {
       const token = localStorage.getItem("jwt");
       const res = await mainApi.checkToken(token);
@@ -63,9 +81,9 @@ function App() {
     catch (err) {
       console.log(err);
     }
-  }, []);
+  };
 
-  const handleLogin = useCallback(async (email, password) => {
+  const handleLogin = async (email, password) => {
     try {
       setIsFetching(true);
       const res = await mainApi.singIn(email, password);
@@ -81,9 +99,9 @@ function App() {
     finally {
       setIsFetching(false);
     }
-  }, [checkToken, navigate]);
+  };
 
-  const handleRegister = useCallback(async (name, email, password) => {
+  const handleRegister = async (name, email, password) => {
     try {
       setIsFetching(true);
       await mainApi.signUp(name, email, password);
@@ -97,30 +115,53 @@ function App() {
     finally {
       setIsFetching(false);
     }
-  }, [handleLogin]);
+  };
 
   // movies
-  const moviesSearchFilter = (movie, keyword) => {
-    const searchShortMovies = localStorage.getItem("movie-search-short-movies") === String(true);
+  const moviesSearchFilter = useCallback((movie, keyword) => {
+    let searchShortMovies = false;
+    switch (pathname) {
+      case '/movies':
+        searchShortMovies = localStorage.getItem("movie-search-short-movies") === String(true);
+        break;
+      case '/saved-movies':
+        searchShortMovies = localStorage.getItem("movie-search-saved-short-movies") === String(true);
+        break;
+      default:
+        searchShortMovies = false;
+        break;
+    }
+
+    // if (pathname === '/movies') {
+    //   searchShortMovies = localStorage.getItem("movie-search-short-movies") === String(true);
+    // } else if (pathname === '/saved-movies') {
+    //   searchShortMovies = localStorage.getItem("movie-search-saved-short-movies") === String(true);
+    // };
+
     if (searchShortMovies && movie.duration > SHORT_MOVIE_MAX_DURATION_MINUTES) {
       return false;
-    }
+    };
 
     const searchFields = [movie.nameRU, movie.nameEN, movie.description, movie.director];
     return searchFields.some((f) => f.toLowerCase().includes(keyword));
-  };
+  }, [pathname]);
+
+  // чтобы не было повторного рендера карточек (НО ЭТО НЕ РАБОТАЕТ)
+  const getMoviesWithLikes = useCallback((films) => {
+    return films.map((film) => ({ ...film, isLiked: savedMovies.some((m) => (m.nameRU === film.nameRU)) }))
+  }, [savedMovies]);
 
   const findMovies = useCallback(async () => {
     try {
-      const keyword = localStorage.getItem("movie-search-last-keyword").toLowerCase();
+      const keyword = localStorage.getItem(localStorageItemName).toLowerCase();
       if (keyword === "") {
         return;
       }
 
       setIsFetching(true);
-      await beatFilmApi.getMovies().then(res => {
+      const moviesPromise = movies.length > 0 ? Promise.resolve(movies) : beatFilmApi.getMovies();
+      await moviesPromise.then(res => {
         const foundMovies = res.filter((movie) => moviesSearchFilter(movie, keyword));
-        setMovies(foundMovies);
         if (!foundMovies.length) {
           setIsError(true);
           setIsMessage(SEARCH_MESSAGE.MESSAGE_NOT_FOUND);
@@ -128,6 +169,7 @@ function App() {
           setIsError(false);
           setIsMessage('');
         }
+        return getMoviesWithLikes(foundMovies);
       });
     }
     catch (err) {
@@ -139,12 +181,12 @@ function App() {
     finally {
       setIsFetching(false);
     }
-  }, [handleApiError]);
+  }, [getMoviesWithLikes, localStorageItemName, movies, moviesSearchFilter]);
 
   const handleSubmitSearch = useCallback((keyword) => {
-    localStorage.setItem("movie-search-last-keyword", keyword);
+    localStorage.setItem(localStorageItemName, keyword);
     findMovies();
-  }, [findMovies]);
+  }, [findMovies, localStorageItemName]);
 
   const handleShortFilmsCheckbox = useCallback(() => {
     const searchShortMovies = localStorage.getItem("movie-search-short-movies") === String(true);
@@ -167,30 +209,29 @@ function App() {
       handleApiError(err);
       console.log(err);
     }
-  }, [handleApiError]);
+  }, [savedMovies]);
 
   const handleMovieDeleteClick = useCallback(async (movieData) => {
     try {
-      await mainApi.deleteMovie(movieData._id);
-      const savedMoviesUpdRes = await mainApi.getSavedMovies();
-      setSavedMovies(savedMoviesUpdRes.data);
+      const deletedMovie = await mainApi.deleteMovie(movieData._id);
+      setSavedMovies(savedMovies.filter((m) => (m.nameRU !== deletedMovie.data.nameRU)));
+      setMovies(getMoviesWithLikes(movies.filter((m) => (m.nameRU !== deletedMovie.data.nameRU))));
     }
     catch (err) {
       console.log(err);
     }
-  }, []);
+  }, [savedMovies, getMoviesWithLikes, movies]);
 
   const findSavedMovies = useCallback(() => {
     try {
       setIsFetching(true);
-      const keyword = localStorage.getItem("movie-search-last-keyword").toLowerCase();
+      const keyword = localStorage.getItem(localStorageItemName).toLowerCase();
       if (keyword === "") {
         return;
       }
 
       // const res = await mainApi.getSavedMovies();
       const foundMovies = savedMovies.filter((movie) => moviesSearchFilter(movie, keyword));
-      setMovies(foundMovies);
       if (!foundMovies.length) {
         setIsError(true);
         setIsMessage(SEARCH_MESSAGE.MESSAGE_NOTHING_SAVED);
@@ -198,6 +239,7 @@ function App() {
         setIsError(false);
         setIsMessage('');
       }
+      return getMoviesWithLikes(foundMovies);
     }
     catch (err) {
       // handleApiError(err);
@@ -206,42 +248,43 @@ function App() {
     finally {
       setIsFetching(false);
     }
-  }, [savedMovies]);
+  }, [getMoviesWithLikes, localStorageItemName, moviesSearchFilter, savedMovies]);
 
   const handleSavedMoviesSearch = useCallback((keyword) => {
-    localStorage.setItem("movie-search-last-keyword", keyword);
+    localStorage.setItem(localStorageItemName, keyword);
     findSavedMovies();
-  }, [findSavedMovies]);
+  }, [findSavedMovies, localStorageItemName]);
 
   const handleSavedShortFilmsCheckbox = useCallback(() => {
-    const searchShortMovies = localStorage.getItem("movie-search-short-movies") === String(true);
-    localStorage.setItem("movie-search-short-movies", String(!searchShortMovies));
+    const searchShortMovies = localStorage.getItem("movie-search-saved-short-movies") === String(true);
+    localStorage.setItem("movie-search-saved-short-movies", String(!searchShortMovies));
     findSavedMovies();
   }, [findSavedMovies]);
 
   useEffect(() => {
     if (pathname.startsWith('/movies')) {
-      findMovies();
+      findMovies().then((foundMovies) => setMovies(foundMovies || []));
     } else if (pathname.startsWith('/saved-movies')) {
-      findSavedMovies();
+      findSavedMovies().then((foundMovies) => setMovies(foundMovies || []));
     }
   }, [findMovies, findSavedMovies, pathname]);
 
 
-  const handleSignOut = useCallback(() => {
+  const handleSignOut = () => {
     setIsLoggedIn(false);
     setCurrentUser({});
     setMovies([]);
     localStorage.clear();
-  }, []);
+  };
 
-  const handleEditProfile = useCallback(async (email, name) => {
+  const handleEditProfile = async (email, name) => {
     try {
       setIsFetching(true);
       const res = await mainApi.setUserInfo({
         email: email,
         name: name,
-      })
+      });
+      setCurrentUser(res.data);
       console.log(res);
       setIsError(true);
       setIsMessage(RES_MESSAGE.MESSAGE_UPDATE_SUCCESS);
@@ -254,11 +297,11 @@ function App() {
     finally {
       setIsFetching(false);
     }
-  }, []);
+  };
 
-  useEffect(() => {
-    checkToken();
-  }, [checkToken]);
+  // useEffect(() => {
+  //   checkToken();
+  // }, []);
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
@@ -278,10 +321,12 @@ function App() {
                   handleMovieLikeClick={handleMovieLikeClick}
                   movies={movies}
                   findMovies={findMovies}
-                  savedMovies={savedMovies}
+                  // savedMovies={savedMovies}
                   isFetching={isFetching}
                   isError={isError}
                   message={message}
+                  localStorageItemName={localStorageItemName}
+                  movieFormCheckbox={movieFormCheckbox}
                 />
               }
             />
@@ -292,13 +337,15 @@ function App() {
                   element={SavedMovies}
                   isLoggedIn={isLoggedIn}
                   movies={movies}
-                  savedMovies={savedMovies}
+                  // savedMovies={savedMovies}
                   handleSavedMoviesSearch={handleSavedMoviesSearch}
                   handleSavedShortFilmsCheckbox={handleSavedShortFilmsCheckbox}
                   handleMovieDeleteClick={handleMovieDeleteClick}
                   findSavedMovies={findSavedMovies}
                   isFetching={isFetching}
                   isError={isError}
+                  localStorageItemName={localStorageItemName}
+                  movieFormCheckbox={savedMovieFormCheckbox}
                   message={message}
                 />
               }
