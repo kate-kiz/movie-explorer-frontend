@@ -32,26 +32,6 @@ function MoviesCardList({ moviesData, handleMovieLikeClick, handleMovieDeleteCli
     };
   }, []);
 
-  // useEffect(() => {
-  //   const cards = moviesData.slice(0, visibleMoviesCount).map((movie) => {
-  //     let isLiked = true;
-  //     if (pathname.startsWith('/movies')) {
-  //       isLiked = savedMovies.some(savedMovie => savedMovie.movieId === movie.id)
-  //     } return (
-  //       <MoviesCard
-  //         key={movie._id}
-  //         movieData={movie}
-  //         handleMovieLikeClick={handleMovieLikeClick}
-  //         handleMovieDeleteClick={handleMovieDeleteClick}
-  //         isLiked={isLiked}
-  //       />
-  //     );
-  //   });
-  //   console.log(cards);
-  //   setMovieCards(cards);
-
-  // }, [savedMovies, moviesData, visibleMoviesCount, handleMovieLikeClick, handleMovieDeleteClick, pathname]);
-
   const handleLoadMore = () => {
     setVisibleMoviesCount(visibleMoviesCount + 4);
   };
@@ -61,10 +41,9 @@ function MoviesCardList({ moviesData, handleMovieLikeClick, handleMovieDeleteCli
   return (
     <section className='movies-cards'>
       <ul className="movies-card-list">
-        {moviesData.slice(0, visibleMoviesCount).map((movie) =>
-        (
+        {moviesData.slice(0, visibleMoviesCount).map((movie) => (
           <MoviesCard
-            movieId={movie._id}
+            key={movie.id ?? movie.movieId}
             movieData={movie}
             handleMovieLikeClick={handleMovieLikeClick}
             handleMovieDeleteClick={handleMovieDeleteClick}
@@ -72,7 +51,6 @@ function MoviesCardList({ moviesData, handleMovieLikeClick, handleMovieDeleteCli
           />
         )
         )}
-        {/* {movieCards} */}
       </ul>
       <div className='movies-cards__load-more-block'>
         {visibleMoviesCount < totalMoviesCount && (

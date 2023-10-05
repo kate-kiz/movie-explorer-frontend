@@ -12,7 +12,7 @@ function SearchForm({ localStorageItemName, movieFormCheckbox, handleSubmitSearc
     isValid,
   } = useValidation({ search: "" });
 
-  // const { pathname } = useLocation();
+  const { pathname } = useLocation();
 
   const getInputValue = useCallback(() => {
     if ("search" in value) {

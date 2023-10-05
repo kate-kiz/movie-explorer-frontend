@@ -22,3 +22,10 @@ export const SEARCH_MESSAGE = {
     MESSAGE_NOTHING_SAVED: 'У вас нет сохранённых фильмов',
     MESSAGE_SEARCH_ERROR: 'Во время загрузки сохранённых фильмов произошла ошибка. Подождите немного и попробуйте обновить страницу.',
 };
+
+export const QUERY_KEYS = {
+    MOVIES_SEARCH_QUERY_KEY: 'movie-search-last-keyword',
+    SAVED_MOVIES_SEARCH_QUERY_KEY: 'saved-movie-search-last-keyword',
+    MOVIES_SEARCH_CHECKBOX_KEY: 'movie-search-short-movies',
+    SAVED_MOVIES_SEARCH_CHECKBOX_KEY: 'movie-search-saved-short-movies',
+}
