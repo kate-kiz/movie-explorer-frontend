@@ -40,13 +40,13 @@ function App() {
   const [movieFormCheckbox, setMovieFormCheckbox] = useState(localStorage.getItem(QUERY_KEYS.MOVIES_SEARCH_CHECKBOX_KEY) === String(true));
   const [savedMovieFormCheckbox, setSavedMovieFormCheckbox] = useState(localStorage.getItem(QUERY_KEYS.SAVED_MOVIES_SEARCH_CHECKBOX_KEY) === String(true));
 
-  const handleApiError = useCallback((err) => {
+  const handleApiError = (err) => {
     setIsError(true);
     setIsMessage(RES_MESSAGE.MESSAGE_ERROR);
     console.log(err);
-  }, []);
+  };
 
-  const checkToken = useCallback(async () => {
+  const checkToken = async () => {
     try {
       const token = localStorage.getItem("jwt");
       const res = await mainApi.checkToken(token);
@@ -58,9 +58,9 @@ function App() {
     catch (err) {
       console.log(err);
     }
-  }, []);
+  };
 
-  const handleLogin = useCallback(async (email, password) => {
+  const handleLogin = async (email, password) => {
     try {
       setIsFetching(true);
       const res = await mainApi.singIn(email, password);
@@ -76,9 +76,9 @@ function App() {
     finally {
       setIsFetching(false);
     }
-  }, [checkToken, navigate]);
+  };
 
-  const handleRegister = useCallback(async (name, email, password) => {
+  const handleRegister = async (name, email, password) => {
     try {
       setIsFetching(true);
       await mainApi.signUp(name, email, password);
@@ -92,16 +92,16 @@ function App() {
     finally {
       setIsFetching(false);
     }
-  }, [handleLogin]);
+  };
 
-  const handleSignOut = useCallback(() => {
+  const handleSignOut = () => {
     setIsLoggedIn(false);
     setCurrentUser({});
     setFetchedMovies([]);
     localStorage.clear();
-  }, []);
+  };
 
-  const handleEditProfile = useCallback(async (email, name) => {
+  const handleEditProfile = async (email, name) => {
     try {
       setIsFetching(true);
       const res = await mainApi.setUserInfo({
@@ -109,7 +109,6 @@ function App() {
         name: name,
       });
       setCurrentUser(res.data);
-      console.log(res);
       setIsError(true);
       setIsMessage(RES_MESSAGE.MESSAGE_UPDATE_SUCCESS);
     }
@@ -121,7 +120,7 @@ function App() {
     finally {
       setIsFetching(false);
     }
-  }, []);
+  };
 
   const moviesSearchFilter = useCallback((movie, keyword) => {
     let searchShortMovies = false;
@@ -228,7 +227,7 @@ function App() {
       handleApiError(err);
       console.log(err);
     }
-  }, [handleApiError, savedMovies]);
+  }, [savedMovies]);
 
   const handleMovieDeleteClick = useCallback(async (movieData) => {
     try {
@@ -238,7 +237,7 @@ function App() {
     catch (err) {
       console.log(err);
     }
-  }, [savedMovies, fetchedMovies]);
+  }, [savedMovies]);
 
   const handleSavedMoviesSearch = useCallback(async (keyword) => {
     // localStorage.setItem(localStorageItemName, keyword);
@@ -289,7 +288,7 @@ function App() {
     };
 
     _checkToken();
-  }, [checkToken]);
+  }, []);
 
   if (isLoading) {
     return <Preloader />

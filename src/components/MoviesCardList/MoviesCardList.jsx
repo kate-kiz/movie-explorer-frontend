@@ -6,10 +6,7 @@ import Preloader from '../Preloader/Preloader';
 
 function MoviesCardList({ moviesData, handleMovieLikeClick, handleMovieDeleteClick, isFetching }) {
   const [visibleMoviesCount, setVisibleMoviesCount] = useState(12);
-  // const [movieCards, setMovieCards] = useState([]);
   const totalMoviesCount = moviesData.length;
-
-  const { pathname } = useLocation();
 
   useEffect(() => {
     const handleResize = () => {
