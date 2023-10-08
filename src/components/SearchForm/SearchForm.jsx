@@ -42,7 +42,7 @@ function SearchForm({ localStorageItemName, movieFormCheckbox, handleSubmitSearc
           type="text"
           placeholder="Фильм"
           name="search"
-          minLength={2}
+          // minLength={2}
           value={getInputValue()}
           onChange={handleChange}
           required
