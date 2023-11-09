@@ -54,6 +54,19 @@
 	text-align: end;
 }
 
+/* .profile__error-message_type_active {
+	color: #EE3465;
+} */
+
+.profile__error-message {
+	margin: 0;
+	padding: 0;
+	color: #EE3465;
+	font-weight: 400;
+	font-size: 10px;
+	line-height: normal;
+}
+
 .profile__form-input:focus {
 	color: #53837D;
 }
@@ -97,6 +110,12 @@
 	font-size: 14px;
 	line-height: normal;
 	color: #FFF;
+}
+
+.profile__save-button:disabled {
+	background-color: #F8F8F8;
+	color: #C2C2C2;
+	cursor: none;
 }
 
 @media (max-width: 899px) {

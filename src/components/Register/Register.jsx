@@ -1,9 +1,9 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useCallback, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import './Register.css';
 import useValidation from '../../hooks/useValidation';
 
-function Register() {
+function Register({ isLoggedIn, handleRegister, isError, isFetching, message }) {
 	const {
 		value,
 		handleChange,
@@ -11,9 +11,25 @@ function Register() {
 		isValid,
 	} = useValidation();
 
-	const handleSubmit = (event) => {
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		if (isLoggedIn) navigate("/");
+	}, [isLoggedIn, navigate]);
+
+	const handleSubmit = useCallback((event) => {
 		event.preventDefault();
-	};
+
+		if (isValid) {
+			const { name, email, password } = value;
+			console.log("Handle register", name, email, password);
+			handleRegister(name, email, password);
+		}
+	}, [handleRegister, isValid, value]);
+
+	useEffect(() => {
+		if (isLoggedIn) navigate('/movies');
+	});
 
 	return (
 		<section className="login">
@@ -27,9 +43,11 @@ function Register() {
 							className="login__input"
 							type="name"
 							name="name"
+							minLength={2}
 							value={value.name || ''}
 							onChange={handleChange}
 							required
+							pattern="^[A-ZА-ЯËa-za-яё]+(?:[ \-][A-ZА-ЯËa-za-яё]+)*$"
 						/>
 						{error.name && <span className="login__error-message">{error.name}</span>}
 					</label>
@@ -41,6 +59,7 @@ function Register() {
 							name="email"
 							value={value.email || ''}
 							onChange={handleChange}
+							pattern="^[\w]+@[a-zA-Z]+\.[a-zA-Z]{1,3}$"
 							required
 						/>
 						{error.email && <span className="login__error-message">{error.email}</span>}
@@ -55,13 +74,14 @@ function Register() {
 							onChange={handleChange}
 							required
 						/>
+						<p className="login__error-message">{isError ? message : ''}</p>
 						{error.password && <span className="login__error-message">{error.password}</span>}
 					</label>
 					<div className="login__submit-block login__submit-block_place_register">
 						<button
 							className={`button-hover login__submit-button ${isValid ? '' : 'login__submit-button_disabled'}`}
 							type="submit"
-							disabled={!isValid}
+							disabled={!isValid || !value.name || !value.email || !value.password || isFetching}
 						>
 							Зарегистрироваться
 						</button>

@@ -1,19 +1,44 @@
-import React from "react";
+import React, { useCallback, useContext, useEffect } from "react";
+import { CurrentUserContext } from "../../contexts/CurrentUserContext";
 import { Link } from 'react-router-dom';
 import './Profile.css';
+import useValidation from "../../hooks/useValidation";
 
-function Profile() {
-	const [isActive, setIsActive] = React.useState(true);
+function Profile({ handleSignOut, handleEditProfile, isFetching, isError, message, currentUser }) {
+	const [isEditing, setIsEditing] = React.useState(false);
+	const user = useContext(CurrentUserContext);
 
-	function handleRedactProfile() {
-		setIsActive(!isActive);
-	}
+	const {
+		value,
+		handleChange,
+		resetForm,
+		error,
+		isValid,
+	} = useValidation({});
+
+	const handleEditProfileClick = useCallback(() => {
+		setIsEditing(() => !isEditing);
+	}, [isEditing]);
+
+	const handleEditProfileSubmit = useCallback((e) => {
+		e.preventDefault();
+		if (!isEditing || !isValid) return;
+		handleEditProfile(value.email, value.name)
+		setIsEditing(false);
+	}, [handleEditProfile, isEditing, isValid, value.email, value.name]);
+
+	useEffect(() => {
+		// resetForm({ name: currentUser.name, email: currentUser.email });
+		if (currentUser) {
+			resetForm(currentUser, {}, true);
+		}
+	}, [resetForm, currentUser]);
 
 	return (
 		<section className="profile">
 			<div className="profile__container">
-				<h1 className="profile__title">Привет, Екатерина!</h1>
-				<form className="profile__form">
+				<h1 className="profile__title">Привет, {currentUser ? currentUser.name : '...'}!</h1>
+				<form id="edit-profile-submit" className="profile__form">
 					<label className="profile__form-label border">
 						Имя
 						<input
@@ -24,8 +49,10 @@ function Profile() {
 							placeholder="Имя"
 							minLength={2}
 							maxLength={30}
-							value="Екатерина"
-							disabled
+							value={value.name || ""}
+							onChange={handleChange}
+							disabled={!isEditing}
+							pattern="^[A-ZА-ЯËa-za-яё]+(?:[ \-][A-ZА-ЯËa-za-яё]+)*$"
 						/>
 					</label>
 					<label className="profile__form-label">
@@ -36,28 +63,35 @@ function Profile() {
 							name="email"
 							id="email-input"
 							placeholder="E-mail"
-							value="kizikovaek@yandex.ru"
-							disabled
+							pattern="^[\w]+@[a-zA-Z]+\.[a-zA-Z]{1,3}$"
+							value={value.email || ""}
+							onChange={handleChange}
+							disabled={!isEditing}
+							required
 						/>
 					</label>
-					{isActive ? (
+					{isError ? <p className="profile__error-message">{message}</p> : ""}
+					{!isEditing ? (
 						<>
 							<button
 								type="button"
 								className="profile__edit-button"
-								onClick={handleRedactProfile}
+								onClick={handleEditProfileClick}
 							>
 								Редактировать
 							</button>
-							<Link className="link profile__exit-button" to="/">
+							<Link className="link profile__exit-button" to="/" onClick={handleSignOut}>
 								Выйти из аккаунта
 							</Link>
 						</>
 					) : (
 						<button
 							type="button"
-							className="button-hover profile__save-button"
-							onClick={handleRedactProfile}
+							className={`button-hover profile__save-button ${isValid ? 'profile__save-button_disabled' : ''}`}
+							onClick={handleEditProfileSubmit}
+							onSubmit={handleEditProfileSubmit}
+							form="edit-profile-submit"
+							disabled={!isValid || (value.email === currentUser.email && value.name === currentUser.name) || isFetching}
 						>
 							Сохранить
 						</button>

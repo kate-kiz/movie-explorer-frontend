@@ -1,19 +1,30 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useCallback, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import useValidation from '../../hooks/useValidation';
 import './Login.css';
 
-function Login() {
+function Login({ handleLogin, isLoggedIn, isError, isFetching, message }) {
   const {
     value,
-    handleChange,
     error,
     isValid,
+    handleChange,
   } = useValidation();
 
-  const handleSubmit = (event) => {
+  const navigate = useNavigate();
+
+  const handleSubmit = useCallback((event) => {
     event.preventDefault();
-  };
+
+    if (isValid) {
+      const { email, password } = value
+      handleLogin(email, password);
+    }
+  }, [handleLogin, isValid, value]);
+
+  useEffect(() => {
+    if (isLoggedIn) navigate("/movies");
+  }, [isLoggedIn, navigate]);
 
   return (
     <section className="login">
@@ -28,6 +39,7 @@ function Login() {
               className="login__input"
               type="email"
               name="email"
+              pattern="^[\w]+@[a-zA-Z]+\.[a-zA-Z]{1,3}$"
               required
               value={value.email || ''}
               onChange={handleChange}
@@ -44,13 +56,14 @@ function Login() {
               value={value.password || ''}
               onChange={handleChange}
             />
+            <p className="login__error-message">{isError ? message : ''}</p>
             <span className="login__error-message">{error.password}</span>
           </label>
           <div className="login__submit-block">
             <button
-              className={`button-hover login__submit-button ${isValid ? '' : 'login__submit-button_disabled'}`}
+              className={`button-hover login__submit-button ${isValid ? 'login__submit-button_disabled' : ''}`}
               type="submit"
-              disabled={!isValid}
+              disabled={!isValid || !value.email || !value.password || isFetching}
             >
               Войти
             </button>

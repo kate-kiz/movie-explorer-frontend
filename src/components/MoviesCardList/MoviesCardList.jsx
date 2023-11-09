@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import MoviesCard from '../MoviesCard/MoviesCard';
 import './MoviesCardList.css';
+import { useLocation } from 'react-router-dom';
+import Preloader from '../Preloader/Preloader';
 
-function MoviesCardList({ moviesData }) {
+function MoviesCardList({ moviesData, handleMovieLikeClick, handleMovieDeleteClick, isFetching }) {
   const [visibleMoviesCount, setVisibleMoviesCount] = useState(12);
   const totalMoviesCount = moviesData.length;
 
@@ -18,12 +20,12 @@ function MoviesCardList({ moviesData }) {
       }
     };
 
-    handleResize(); // Установка видимого количества карточек при первом рендере
+    handleResize();
 
-    window.addEventListener('resize', handleResize); // Добавление обработчика изменения размера окна
+    window.addEventListener('resize', handleResize);
 
     return () => {
-      window.removeEventListener('resize', handleResize); // Удаление обработчика при размонтировании компонента
+      window.removeEventListener('resize', handleResize);
     };
   }, []);
 
@@ -31,12 +33,21 @@ function MoviesCardList({ moviesData }) {
     setVisibleMoviesCount(visibleMoviesCount + 4);
   };
 
+  if (isFetching) return <Preloader />
+
   return (
     <section className='movies-cards'>
       <ul className="movies-card-list">
         {moviesData.slice(0, visibleMoviesCount).map((movie) => (
-          <MoviesCard key={movie.movieId} movieData={movie} />
-        ))}
+          <MoviesCard
+            key={movie.id ?? movie.movieId}
+            movieData={movie}
+            handleMovieLikeClick={handleMovieLikeClick}
+            handleMovieDeleteClick={handleMovieDeleteClick}
+            isLiked={movie.isLiked}
+          />
+        )
+        )}
       </ul>
       <div className='movies-cards__load-more-block'>
         {visibleMoviesCount < totalMoviesCount && (

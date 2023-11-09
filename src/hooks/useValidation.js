@@ -1,13 +1,13 @@
 import { useState, useCallback } from 'react';
 
-function useValidation() {
+function useValidation(initialValues = {}) {
 	const [value, setValue] = useState({});
 	const [error, setError] = useState({});
 	const [isValid, setIsValid] = useState(true);
 
 	const handleChange = (event) => {
-		const { name, value } = event.target
-		setValue({ ...value, [name]: value });
+		const { name, value: _value } = event.target
+		setValue({ ...value, [name]: _value });
 		setError({ ...error, [name]: event.target.validationMessage });
 		setIsValid(event.target.closest('form').checkValidity());
 	};

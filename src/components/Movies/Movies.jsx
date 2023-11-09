@@ -3,13 +3,25 @@ import SearchForm from "../SearchForm/SearchForm";
 import MoviesCardList from "../MoviesCardList/MoviesCardList";
 
 import './Movies.css';
-import { moviesData } from "../../utils/cards.js";
 
-function Movies() {
+
+function Movies({ movies, localStorageItemName, movieFormCheckbox, handleMovieLikeClick, handleShortFilmsCheckbox, handleSubmitSearch, isFetching, isError, message }) {
 	return (
 		<>
-			<SearchForm />
-			<MoviesCardList moviesData={moviesData} />
+			<SearchForm
+				handleSubmitSearch={handleSubmitSearch}
+				handleShortFilmsCheckbox={handleShortFilmsCheckbox}
+				isError={isError}
+				message={message}
+				movieFormCheckbox={movieFormCheckbox}
+				localStorageItemName={localStorageItemName}
+			/>
+			<MoviesCardList
+				handleMovieLikeClick={handleMovieLikeClick}
+				moviesData={movies}
+				// savedMovies={savedMovies}
+				isFetching={isFetching}
+			/>
 		</>
 	)
 }
